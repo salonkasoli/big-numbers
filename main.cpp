@@ -14,13 +14,12 @@ using namespace std;
 
 int main()
 {
-    srand(time(0));
-    for(int i = 1; i < 100; i++){
-        big_number a(2,big_number::RANDOM);
-        a.print();
-        int n = a.count_tailing_zeroes();
-        printf("n = %d\n",n);
-    }
+    big_number a("0x12345000000000");
+    a.print_dbg();
+    int r = a.count_tailing_zeroes();
+    printf("r = %d\n",r);
+    big_number b = a.shift_big_number(r);
+    b.print_dbg();
 
 
     /*

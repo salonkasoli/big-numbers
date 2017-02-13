@@ -108,6 +108,8 @@ public:
 
     int count_tailing_zeroes();
 
+    big_number shift_big_number(const int shift);
+
     ~big_number()
     {
         delete [] m_data;

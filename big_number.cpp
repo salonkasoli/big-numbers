@@ -887,3 +887,34 @@ int big_number::count_tailing_zeroes(){
     }
 
 }
+
+big_number big_number::shift_big_number(const int shift){
+    int number_of_null_bases = shift / ( sizeof(base)*8 );
+
+    int base_shift = shift % ( sizeof(base)*8 );
+
+    big_number a(m_len - number_of_null_bases);
+
+    unsigned int mask = 1 << base_shift;
+
+    mask--;
+
+    for(int i = number_of_null_bases; i < m_len; i++){
+
+        base tmp;
+
+        if(i == m_len - 1){
+            tmp = 0;
+        }
+        else{
+            tmp = m_data[i+1] & mask;
+        }
+
+        a.m_data[i - number_of_null_bases] = m_data[i] >> base_shift;
+
+        a.m_data[i - number_of_null_bases] = a.m_data[i - number_of_null_bases] | (tmp << (sizeof(base)*8 - shift) );
+    }
+
+    return a;
+
+}
