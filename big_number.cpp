@@ -382,8 +382,7 @@ void big_number::print()
 
         for( int i = m_len - 2; i >= 0 ; i-- )
             printf("%08x", m_data[i]);
-
-        printf("\n len = %d \n capacity = %d\n\n", m_len, m_capacity);
+        printf("\n");
 
     }
 
@@ -821,4 +820,70 @@ void big_number::print_dbg()
     }
 
     printf("\n len = %d\n capacity = %d\n", m_len, m_capacity);
+}
+
+big_number big_number::random_from_bit_quantity(int k){
+    if(k % (sizeof(base) * 8) == 0 ){
+        int number_of_bases = k / (sizeof(base) * 8);
+        big_number a(number_of_bases,big_number::RANDOM);
+        a.make_uneven();
+        a.set_bit(number_of_bases - 1, sizeof(base)*8 - 1,1);
+
+        return a;
+    }
+    else{
+        int number_of_bases = k / (sizeof(base) * 8) + 1;
+        int overflow_bits = k % (sizeof(base) * 8);
+        int base_remainder = sizeof(base) * 8 - overflow_bits;
+
+        big_number a(number_of_bases,big_number::RANDOM);
+        a.base_shift(number_of_bases - 1,base_remainder);
+        a.make_uneven();
+        a.set_bit(number_of_bases - 1, overflow_bits - 1,1);
+
+        return a;
+    }
+}
+
+void big_number::base_shift(int base_number, int k){
+
+    if(m_len < base_number){
+        printf("Base shift error");
+        return;
+    }
+    else{
+        m_data[base_number] >>= k;
+        return;
+    }
+}
+
+void big_number::make_uneven(){
+        m_data[0] = m_data[0] | 1;
+        return;
+}
+void big_number::set_bit(int base_num, int bit_num, int bit_value){
+    if(bit_value == 1){
+        m_data[base_num] = m_data[base_num] | (1 << bit_num) ;
+    }
+}
+
+int big_number::count_tailing_zeroes(){
+    int zeroes = 0;
+    int i = 0;
+    while(m_data[i] == 0){
+        zeroes += sizeof(base)*8;
+        i++;
+    }
+
+    int mask = 1;
+    while(true){
+        if((m_data[i] & mask) == 0){
+            zeroes++;
+            mask = mask << 1;
+        }
+        else{
+            return zeroes;
+        }
+    }
+
 }

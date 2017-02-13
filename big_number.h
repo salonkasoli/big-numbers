@@ -49,6 +49,12 @@ private:
 
     void base_div( base divider, base & remainder);
 
+    void set_bit(int base_num, int bit_num, int bit_value);
+
+    void base_shift(int base_number, int k);
+
+    void make_uneven();
+
 
 public:
 
@@ -97,6 +103,10 @@ public:
     bool operator==( const big_number& right) const;
 
     bool operator!=( const big_number& right) const;
+
+    static big_number random_from_bit_quantity(int k);
+
+    int count_tailing_zeroes();
 
     ~big_number()
     {

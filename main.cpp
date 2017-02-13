@@ -14,19 +14,30 @@ using namespace std;
 
 int main()
 {
+    srand(time(0));
+    for(int i = 1; i < 100; i++){
+        big_number a(2,big_number::RANDOM);
+        a.print();
+        int n = a.count_tailing_zeroes();
+        printf("n = %d\n",n);
+    }
 
- //   srand(time(0));
 
-  //  const int number_of_tests = 100;
-   // const int size_of_big_number = 300;
-/*
+    /*
+    srand(time(0));
+    const int number_of_tests = 1000;
+    const int size_of_big_number = 1000;
+
+    int n = 1 + rand()%size_of_big_number;
+    int m = 1 + rand()%size_of_big_number;
+
     for(int i = 0; i < number_of_tests; i++)
     {
-        big_number a(size_of_big_number,big_number::RANDOM);
-        big_number b(size_of_big_number,big_number::RANDOM);
-        big_number c(size_of_big_number,big_number::RANDOM);
-
-        if (a + b + c == c + a + b) printf("TEST %d is COMPLETED\n", i);
+        big_number a(n,big_number::RANDOM);
+        big_number b(m,big_number::RANDOM);
+        big_number q = a / b;
+        big_number r = a % b;
+        if ((a == b * q + r) && (a - r == b * q) && ( r < b ) ) printf("TEST %d is COMPLETED\n", i);
         else {printf("ERROR!!!!!!\n"); break;}
     }
 */
@@ -36,7 +47,6 @@ int main()
     {
         big_number a(size_of_big_number,big_number::RANDOM);
         big_number b(size_of_big_number,big_number::RANDOM);
-
         if (a+b-a-b == big_number (1)) printf("TEST %d is COMPLETED\n", i);
         else {printf("ERROR!!!!!!\n"); break;}
     }
@@ -60,8 +70,6 @@ int main()
     {
         big_number a(2*size_of_big_number,big_number::RANDOM);
         big_number b(size_of_big_number,big_number::RANDOM);
-
-
         if (a*b/b == a) printf("TEST %d is COMPLETED\n", i);
         if(a*b*b == a || true) printf("TEST %d is COMPLETED\n", i);
         else {printf("ERROR!!!!!!\n"); break;}
@@ -73,14 +81,12 @@ int main()
     {
         big_number a(2*size_of_big_number,big_number::RANDOM);
         big_number b(size_of_big_number,big_number::RANDOM);
-
-
         if (a/b*b + a%b == a) printf("TEST %d is COMPLETED\n", i);
         else {printf("ERROR!!!!!!\n"); break;}
     }
 */
 
-
+/*
     string test_root_dir = "C:\\tests";
 
     string test_name = "bigint_div_tests";
@@ -142,5 +148,5 @@ int main()
 
    // big_number a("79750903799563644671");
   //  a.dec_print();
-
+*/
 }
