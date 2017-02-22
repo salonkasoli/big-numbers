@@ -55,6 +55,12 @@ private:
 
     void make_uneven();
 
+    static int count_leading_zeroes(unsigned int x);
+
+
+
+
+
 
 public:
 
@@ -72,11 +78,11 @@ public:
 
     big_number( const big_number & a);
 
-    void print();
+    void print() const;
 
-    void dec_print();
+    void dec_print() const;
 
-    void print_dbg();
+    void print_dbg() const;
 
     big_number & operator=( big_number const & a );
 
@@ -89,6 +95,8 @@ public:
     big_number operator/ ( const big_number & right) const;
 
     big_number operator% ( const big_number & right1 ) const;
+
+    static big_number power(const big_number x, const big_number y, const big_number m);
 
     base& operator[] ( int i );
 
@@ -109,6 +117,13 @@ public:
     int count_tailing_zeroes();
 
     big_number shift_big_number(const int shift);
+
+    static base* array_add(base *a, unsigned int a_len, base *b, unsigned int b_len, unsigned int &res_len);
+
+
+
+
+
 
     ~big_number()
     {

@@ -1,4 +1,5 @@
 #include "big_number.h"
+#define BASE_BORDER 10
 
 
 
@@ -373,7 +374,7 @@ bool big_number::shift_sub(  const big_number & right, int shift )
 }
 
 
-void big_number::print()
+void big_number::print() const
     {
         assert(m_len != 0 && "WRONG BIG NUMBER");
         printf("0x");
@@ -783,7 +784,7 @@ void big_number::dec_input(const char* text)
     add_base(current_base);
 }
 
-void big_number::dec_print()
+void big_number::dec_print() const
 {
     std::string s = "";
 
@@ -810,7 +811,7 @@ void big_number::dec_print()
 }
 
 
-void big_number::print_dbg()
+void big_number::print_dbg() const
 {
 
     for(int i = m_len - 1; i >= 0 ; i --)
@@ -861,6 +862,7 @@ void big_number::make_uneven(){
         m_data[0] = m_data[0] | 1;
         return;
 }
+
 void big_number::set_bit(int base_num, int bit_num, int bit_value){
     if(bit_value == 1){
         m_data[base_num] = m_data[base_num] | (1 << bit_num) ;
@@ -918,3 +920,179 @@ big_number big_number::shift_big_number(const int shift){
     return a;
 
 }
+
+
+big_number big_number::power(const big_number x, const big_number y, const big_number m) {
+
+
+    big_number q = x;
+    big_number z;
+    unsigned int mask = 1;
+    int j = 0;
+    if(y.m_data[j] & mask){
+        z = x;
+    }
+    else{
+        z = big_number("1");
+    }
+
+    for(int i = 1; i < (sizeof(base)*8)*y.m_len; i++){
+        q = (q * q) % m;
+        mask <<= 1;
+        if(mask == 0){
+            mask = 1;
+            j++;
+        }
+        if(mask & y.m_data[j]){
+            z = z * q % m;
+        }
+
+    }
+
+    return z;
+
+}
+
+int big_number::count_leading_zeroes(unsigned int x){
+    int n = 0;
+    if(x >> 16 == 0){
+        n += 16;
+        x <<= 16;
+    }
+    if(x >> 24 == 0){
+        n += 8;
+        x <<= 8;
+    }
+    if(x >> 28 == 0){
+        n += 4;
+        x <<= 4;
+    }
+    if(x >> 30 == 0){
+        n += 2;
+        x <<= 2;
+    }
+    if(x >> 31 == 0){
+        n += 1;
+    }
+    return n;
+}
+
+
+big_number karatsuba_multiply(const big_number a, const big_number b){
+
+
+
+
+}
+
+base* karatsuba_multiply_rec(base *a,unsigned int a_len, base *b,unsigned int b_len, base *res_array, unsigned int res_array_len){
+
+    if(a_len == 0 || b_len == 0){
+        return 0;
+    }
+
+    if(a_len > BASE_BORDER || b_len > BASE_BORDER){
+
+        int max_len = std::max(a_len,b_len);
+
+        base *a_0, *a_1, *b_0, *b_1;
+        unsigned int a_0_len, a_1_len, b_0_len, b_1_len;
+
+        unsigned int half_len = (max_len+1) / 2;
+
+        if (a_len > half_len){
+            a_0 = a;
+            a_0_len = half_len;
+            a_1 = a;
+            a_1_len = a_len - half_len;
+        }
+        else{
+            a_0 = a;
+            a_0_len = a_len;
+            a_1 = 0;
+            a_1_len = 0;
+        }
+
+        if (a_len > half_len){
+            b_0 = b;
+            b_0_len = half_len;
+            b_1 = b;
+            b_1_len = b_len - half_len;
+        }
+        else{
+            b_0 = b;
+            b_0_len = b_len;
+            b_1 = 0;
+            b_1_len = 0;
+        }
+        unsigned int c_0_len,c_1_len;
+        base *c_1 = big_number::array_add(a_1,a_1_len,a_0,a_0_len,c_1_len);
+        base *c_0 = big_number::array_add(b_1,b_1_len,b_0,b_0_len,c_0_len);
+        c_res = karatsuba_multiply_rec(c_1,c_1_len,c_0,c_0_len, c_res_len);
+        karatsuba_multiply_rec(a_0,a_0_len,b_0,b_0_len, b_res_len,res_array);
+        karatsuba_multiply_rec(a_1,a_1_len,b_1,b_1_len, a_res_len);
+
+
+
+
+    }
+
+
+}
+
+base* big_number::array_add(base *a, unsigned int a_len, base *b, unsigned int b_len, unsigned int &res_len){
+
+    unsigned int max_len, min_len;
+
+    base *max_array;
+    if(a_len >= b_len){
+        max_len = a_len;
+        min_len = b_len;
+        max_array = a;
+    }
+    else{
+        max_len = a_len;
+        min_len = b_len;
+        max_array = b;
+    }
+
+    base* res_array = new base[max_len+1];
+    base overflow = 0;
+
+    for(int i = 0; i < min_len; i++){
+        res_array[i] = a[i] + b[i] + overflow;
+        if(res_array[i] < a[i]){
+            overflow = 1;
+        }
+        else{
+            overflow = 0;
+        }
+    }
+
+    if(overflow == 1){
+        for(int i = min_len; i < max_len; i++){
+            res_array[i] = max_array[i] + overflow;
+            if(res_array[i] < max_array[i]){
+                overflow = 1;
+            }
+            else{
+                overflow = 0;
+                break;
+            }
+        }
+
+    }
+
+    if(overflow == 1){
+        res_len = max_len+1;
+
+    }
+    else{
+        res_len = max_len;
+    }
+
+    return res_array;
+
+
+}
+
