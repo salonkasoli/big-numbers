@@ -978,6 +978,7 @@ int big_number::count_leading_zeroes(unsigned int x){
 }
 
 
+
 big_number karatsuba_multiply(const big_number a, const big_number b){
 
 
@@ -991,46 +992,58 @@ base* karatsuba_multiply_rec(base *a,unsigned int a_len, base *b,unsigned int b_
         return 0;
     }
 
+    int max_len = std::max(a_len,b_len);
+
+    base *a_0, *a_1, *b_0, *b_1;
+    unsigned int a_0_len, a_1_len, b_0_len, b_1_len;
+
+    unsigned int half_len = (max_len+1) / 2;
+
+    if (a_len > half_len){
+        a_0 = a;
+        a_0_len = half_len;
+        a_1 = a;
+        a_1_len = a_len - half_len;
+    }
+    else{
+        a_0 = a;
+        a_0_len = a_len;
+        a_1 = 0;
+        a_1_len = 0;
+    }
+
+    if (a_len > half_len){
+        b_0 = b;
+        b_0_len = half_len;
+        b_1 = b;
+        b_1_len = b_len - half_len;
+    }
+    else{
+        b_0 = b;
+        b_0_len = b_len;
+        b_1 = 0;
+        b_1_len = 0;
+    }
+
     if(a_len > BASE_BORDER || b_len > BASE_BORDER){
 
-        int max_len = std::max(a_len,b_len);
 
-        base *a_0, *a_1, *b_0, *b_1;
-        unsigned int a_0_len, a_1_len, b_0_len, b_1_len;
+        karatsuba_multiply_rec(a_0,a_0_len,b_0,b_0_len,res_array,res_array_len/2);
+        karatsuba_multiply_rec(a_1,a_1_len,b_1,b_1_len, res_array + res_array_len/2,res_array_len/2);
 
-        unsigned int half_len = (max_len+1) / 2;
 
-        if (a_len > half_len){
-            a_0 = a;
-            a_0_len = half_len;
-            a_1 = a;
-            a_1_len = a_len - half_len;
-        }
-        else{
-            a_0 = a;
-            a_0_len = a_len;
-            a_1 = 0;
-            a_1_len = 0;
-        }
-
-        if (a_len > half_len){
-            b_0 = b;
-            b_0_len = half_len;
-            b_1 = b;
-            b_1_len = b_len - half_len;
-        }
-        else{
-            b_0 = b;
-            b_0_len = b_len;
-            b_1 = 0;
-            b_1_len = 0;
-        }
         unsigned int c_0_len,c_1_len;
         base *c_1 = big_number::array_add(a_1,a_1_len,a_0,a_0_len,c_1_len);
         base *c_0 = big_number::array_add(b_1,b_1_len,b_0,b_0_len,c_0_len);
-        c_res = karatsuba_multiply_rec(c_1,c_1_len,c_0,c_0_len, c_res_len);
-        karatsuba_multiply_rec(a_0,a_0_len,b_0,b_0_len, b_res_len,res_array);
-        karatsuba_multiply_rec(a_1,a_1_len,b_1,b_1_len, a_res_len);
+
+
+        base *c_res = new base[(half_len+1)*2];
+        unsigned int c_res_len = (half_len+1)*2;
+        karatsuba_multiply_rec(c_1,c_1_len,c_0,c_0_len, c_res, c_res_len);
+        add_to_array(res_array+(half_len+1)/2, res_array_len - (half_len+1)/2, c_res, c_res_len);
+
+    }
+    else{
 
 
 
@@ -1038,7 +1051,42 @@ base* karatsuba_multiply_rec(base *a,unsigned int a_len, base *b,unsigned int b_
     }
 
 
+
+
+
 }
+
+
+void add_to_array(base *a, unsigned int a_len, base*b, unsigned int b_len){
+
+    base overflow = 0;
+
+    for(int i = 0; i < b_len; i++){
+        a[i] += b[i] + overflow;
+        if(a[i] < b[i]){
+            overflow = 1;
+        }
+        else{
+            overflow = 0;
+        }
+    }
+    if(overflow == 1){
+        for(int i = b_len; i < a_len; i++){
+            a[i] += overflow;
+            if(a[i] != 0){
+                overflow = 0;
+                break;
+            }
+
+            if(overflow == 1){
+                printf("ERROR IN ADD TO ARRAY");
+            }
+        }
+    }
+
+}
+
+
 
 base* big_number::array_add(base *a, unsigned int a_len, base *b, unsigned int b_len, unsigned int &res_len){
 

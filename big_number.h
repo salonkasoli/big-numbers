@@ -120,6 +120,8 @@ public:
 
     static base* array_add(base *a, unsigned int a_len, base *b, unsigned int b_len, unsigned int &res_len);
 
+    static big_number karatsuba_multiply_idiotic(const big_number a, const big_number b);
+
 
 
 

@@ -14,20 +14,10 @@ using namespace std;
 
 int main()
 {
-    srand(time(0));
-    for(int i = 1; i < 100; i++){
-        big_number x(i,big_number::RANDOM);
-        big_number y("11111111111111111111111111111111411111111111111111111111111111111");
-        //big_number y("2147483647");
-        big_number pow = big_number::power(x,y,y);
-        if (x%y != pow){
-            x.dec_print();
-            y.dec_print();
-            (x%y).print();
-            pow.print();
-            break;
-        }
-    }
+    big_number a("123");
+    big_number b("456");
+    big_number c = big_number::karatsuba_multiply_idiotic(a,b);
+    c.print();
 
 
 
